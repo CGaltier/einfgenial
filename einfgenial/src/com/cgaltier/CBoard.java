@@ -55,6 +55,10 @@ public class CBoard
 	//------------------------------------------------------------------------------------------------------------------------
 	public CBoard(int iNumberPlayer)
 	{
+		for (int i=0;i<6;i++)
+		{
+			s_tValidCountDirections[i]=new CTileSlotPos();
+		}
 		switch (iNumberPlayer)
 		{
 		case 1 :
@@ -109,7 +113,8 @@ public class CBoard
 		{
 			for (yCurrent = 0 ; yCurrent < s_PlayerBoardTileSlotSideLength ; yCurrent ++)
 			{
-				m_ctBoardTileSlot [xCurrent][yCurrent].setValue ( eColour.eFree );
+				//m_ctBoardTileSlot [xCurrent][yCurrent].setValue ( eColour.eFree );
+				m_ctBoardTileSlot [xCurrent][yCurrent]=new CTileSlot(eColour.eFree);
 			}			
 		}
 		
@@ -127,9 +132,9 @@ public class CBoard
 		int yStart=s_PlayerBoardTileRadius;		
 		int yEnd=s_PlayerBoardTileSlotSideLength;
 
-		for (yCurrent = yStart ; yCurrent <= yEnd ; yCurrent++)
+		for (yCurrent = yStart ; yCurrent < yEnd ; yCurrent++)
 		{
-			for (xCurrent = xStart ; xCurrent <= xEnd ; xCurrent++)
+			for (xCurrent = xStart ; xCurrent < xEnd ; xCurrent++)
 			{
 				m_ctBoardTileSlot[xCurrent][yCurrent].setValue(eColour.eForbidden);//forbidden status
 			}
@@ -140,9 +145,9 @@ public class CBoard
 		xEnd=s_PlayerBoardTileSlotSideLength;
 		yStart=0;		
 		yEnd=s_PlayerBoardTileRadius;
-		for (yCurrent = yStart ; yCurrent <= yEnd ; yCurrent++)
+		for (yCurrent = yStart ; yCurrent < yEnd ; yCurrent++)
 		{
-			for (xCurrent = xStart ; xCurrent <= xEnd ; xCurrent++)
+			for (xCurrent = xStart ; xCurrent < xEnd ; xCurrent++)
 			{
 				m_ctBoardTileSlot[xCurrent][yCurrent].setValue(eColour.eForbidden);//forbidden status
 			}

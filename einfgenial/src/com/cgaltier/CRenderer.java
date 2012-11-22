@@ -3,12 +3,14 @@ package com.cgaltier;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.cgaltier.CTileSlot.eColour;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -41,17 +43,21 @@ public class CRenderer
 	//private Vector3 yAxis = new Vector3(0, 1, 0).nor();
 	private Vector3 xAxis = new Vector3(1, 0, 0).nor();
 	
-	//private OrthographicCamera camera;
-	private PerspectiveCamera camera;
+	private OrthographicCamera camera;
+	//private PerspectiveCamera camera;
+	
+	CShader slotShader;
 	
 	public CRenderer (CGame m_CGame)
 	{
+		slotShader = new CShader ("SimpleShader","txt");
+		slotShader.createProgram();
 		m_fCenterYOffset = m_CGame.m_cBoard.s_PlayerBoardTileSlotSideLength/2.0f;
 		m_fCenterXOffset = m_CGame.m_cBoard.s_PlayerBoardTileSlotSideLength/2.0f;
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
-		//camera = new OrthographicCamera(1, h/w);
-		camera = new PerspectiveCamera(45, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera = new OrthographicCamera(1, h/w);
+		//camera = new PerspectiveCamera(45, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.translate(0.0f, 0.0f, 3.0f);
 		camera.lookAt(0, 0, 0);
    		camera.update();
@@ -70,11 +76,14 @@ public class CRenderer
 		m_cColour6SlotMesh = createMesh(eColour.eColour6);
 		m_cColourEmptySlotMesh = createMesh(eColour.eFree);		
 	}
+
 	private Mesh createMesh (eColour colour) 
 	{
 		Mesh newMesh ;
 		int nTotalPoints = 6 ;
-		int nTotalIndices = 13 ;
+		int nTotalIndices = 12 ;
+		int nSizeOfPoints = 3+1;
+				
 		newMesh = new Mesh (	true, 
     			nTotalPoints, 
 				nTotalIndices, 
@@ -99,11 +108,11 @@ public class CRenderer
 										);
 		short indices [] = new short [nTotalIndices];
 		indices  [0] = 0; indices  [1] = 1; indices  [2] = 2;
-		indices  [3] = 0; indices  [4] = 2; indices  [6] = 3;
-		indices  [7] = 0; indices  [8] = 3; indices  [9] = 5;
-		indices [10] = 5; indices [11] = 3; indices [12] = 4;
+		indices  [3] = 0; indices  [4] = 2; indices  [5] = 3;
+		indices  [6] = 0; indices  [7] = 3; indices  [8] = 5;
+		indices [9] = 5; indices [10] = 3; indices [11] = 4;
 		newMesh.setIndices(indices);
-	  	float Vertices [] = new float [nTotalPoints];
+	  	float Vertices [] = new float [nTotalPoints*nSizeOfPoints];
 	  	int R = 0 ;
 	  	int G = 0 ;
 	  	int B = 0 ;
@@ -153,7 +162,7 @@ public class CRenderer
 			angle += angleDelta ;
 		}
 		
-		return null;
+		return newMesh;
 	}
 	public void start() 
 	{
@@ -213,18 +222,19 @@ public class CRenderer
 	  			break;
 	  	}		
 	}
-	private void displaySlotMesh (Mesh m_cColourEmptySlotMesh2, int iRow, int iCol) 
+	private void displaySlotMesh (Mesh slotMesh, int iRow, int iCol) 
 	{
 		model.idt();
 		model2.setToRotation(xAxis, 90);
 		model.mul(model2);
 		//TODO
-		//float x = ;
-		float y = (iCol*m_slotSize)-this.m_fCenterYOffset;
+		float x = (iRow*m_slotSize);;
+		float y = (iCol*m_slotSize);//-this.m_fCenterYOffset;
 		float z=0.0f;
-		//model.setToTranslation(x, y, z);
+		model.setToTranslation(x, y, z);
 		updateMatrices();
 		
+		slotMesh.render(slotShader.mProgram, GL20.GL_TRIANGLES, 0, slotMesh.getNumIndices());
 	}
 	public void end() 
 	{

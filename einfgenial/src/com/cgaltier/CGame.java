@@ -41,6 +41,10 @@ public class CGame
 	private void initTabsOfTiles() 
 	{
 		m_tFreeTiles = new CTile [s_iTileNumber];
+		for (int i=0; i < s_iTileNumber;i++)
+		{
+			m_tFreeTiles[i]=new CTile();
+		}
 		//each colour double 5
 		//each colour with each other 6
 		//11,22,33,44,55,66 x5 ->30
